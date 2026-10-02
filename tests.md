@@ -32,7 +32,7 @@ Arquivos: `tests/br/pucrs/vv/fraction/` (`FractionExampleTest`, `FractionPropert
 | R14 | `toString()` devolve `"n/d"`, ou só `"n"` quando d = 1. |
 | R15 | Objeto de valor imutável. |
 
-Contratos do Randoop: **C1–C6** são os contratos padrão (Pacheco et al., 2007): C1 `o.equals(o)`; C2 `equals` simétrico; C3 `equals` transitivo; C4 `equals` ⇒ mesmo `hashCode`; C5 `hashCode`/`toString` não lançam exceção; C6 sem NPE quando nenhum argumento era null. **C7–C10** são adicionais: C7 denominador > 0; C8 mdc = 1 e zero é 0/1; C9 `compareTo == 0` ⇔ `equals`; C10 `toString` não vazio e `parse(toString())` igual ao original.
+Contratos do Randoop. Da **Figura 4 do artigo** (Pacheco et al., 2007): C1 `o.equals(o)` é verdadeiro; C5 `equals`, `hashCode` e `toString` não lançam exceção; C6 nenhum NPE quando nenhum argumento era null (o artigo lista também "sem `AssertionError`"). **C2, C3 e C4** (`equals` simétrico, `equals` transitivo, `equals` ⇒ mesmo `hashCode`) **não constam da Figura 4**: são contratos que a versão 4.3.4 da ferramenta verifica (classes `EqualsSymmetric`, `EqualsTransitive` e `EqualsHashcode` no jar). A versão 4.3.4 também aplica contratos próprios para `compareTo` (`compareTo-transitive`, `compareTo-equals` etc.). **C7–C10** são adicionais, registrados por nós: C7 denominador > 0; C8 mdc = 1 e zero é 0/1; C9 `compareTo == 0` ⇔ `equals`; C10 `toString` não vazio e `parse(toString())` igual ao original.
 
 Propriedades do jqwik: P1…P14, descritas na seção 2.
 

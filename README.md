@@ -42,7 +42,7 @@ fraction-lab/
 ├── scripts/
 │   └── run-randoop.sh         gera os testes com o Randoop
 ├── resenha/                   resenha crítica (resenha.pdf, com o HTML-fonte)
-├── apresentacao/roteiro.md    roteiro da apresentação (6 min 30 s)
+├── apresentacao/              slides (apresentacao.pptx) e roteiro de fala (roteiro.md)
 ├── tests.md                   casos de teste documentados e matriz de rastreabilidade
 ├── .github/workflows/ci.yml   CI: build, testes e cobertura (GitHub Actions)
 ├── pom.xml                    build Maven (JUnit 5, jqwik, JaCoCo, perfil do Randoop)
@@ -82,7 +82,7 @@ Roda os testes de exemplo (`EX-*`) e as propriedades do jqwik (`PB-*`). O jqwik 
    mvn -P randoop verify
    ```
 
-**Contratos.** O Randoop já verifica seus contratos padrão (`equals` reflexivo, simétrico e transitivo; `hashCode` consistente; `hashCode` e `toString` sem exceção; sem NPE quando nenhum argumento era null). Os contratos adicionais do domínio são registrados em `randoop/fraction-specs.json` como pós-condições dos métodos:
+**Contratos.** O artigo (Figura 4) lista como contratos padrão: `equals` reflexivo, `equals`/`hashCode`/`toString` sem exceção, sem NPE quando nenhum argumento era null e sem `AssertionError`. A versão 4.3.4 da ferramenta verifica ainda simetria e transitividade de `equals`, `hashCode` consistente com `equals` e contratos de `compareTo`. Os contratos adicionais do domínio são registrados em `randoop/fraction-specs.json` como pós-condições dos métodos:
 
 | Contrato | Método | Condição |
 |----------|--------|----------|

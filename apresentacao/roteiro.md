@@ -2,7 +2,7 @@
 
 Tema: **Verificação de uma classe de frações com Randoop e jqwik.**
 Divisão: Eduardo (slides 1–3), Lucas (slides 4–5), Fernando (slides 6–8). Cada pessoa fala cerca de 2 min.
-Todos os números vêm de `tests.md`, seção 5.
+Todos os números vêm de `tests.md`, seção 5. Os slides estão em `apresentacao.pptx`, com a fala de cada um nas notas do orador.
 
 | # | Tempo | Quem | Slide |
 |---|-------|------|-------|
@@ -26,8 +26,8 @@ Todos os números vêm de `tests.md`, seção 5.
 **Fala:** "A `Fraction` é imutável e sempre normalizada. Tem aritmética exata e sinaliza overflow com exceção, nunca com resultado errado. Escolhemos esse kata porque tem invariantes fortes, uma álgebra conhecida e um risco numérico claro. Uma decisão de projeto: argumento nulo lança `NullPointerException`, compatível com o contrato do Randoop."
 
 ## Slide 3 – As técnicas e o baseline (0:50, Eduardo)
-**Na tela:** Pacheco et al. (2007) → Randoop; Fink e Bishop (1997) → propriedades; baseline com 15 exemplos.
-**Fala:** "Pacheco e colegas propõem gerar testes de forma aleatória guiada por feedback, com contratos genéricos como oráculo. Fink e Bishop propõem testar a partir de propriedades formais, com oráculo gerado da especificação. Há uma diferença: o jqwik não implementa a técnica de Fink e Bishop, mas usa a mesma ideia de propriedade como especificação. Dez anos separam os artigos: o oráculo ficou genérico e a geração de dados ficou automática. Como contraste, 15 testes de exemplo."
+**Na tela:** linha do tempo: 1997, Fink e Bishop (propriedades) → 2007, Pacheco et al. (Randoop); faixa de atenção sobre o jqwik; baseline com 15 exemplos.
+**Fala:** "Em 1997, Fink e Bishop propõem testar a partir de propriedades formais, com oráculo gerado da especificação. Em 2007, Pacheco e colegas propõem gerar testes de forma aleatória guiada por feedback, com contratos genéricos como oráculo. Dez anos separam os artigos: o oráculo ficou genérico e a geração de dados ficou automática. Um cuidado: o jqwik não implementa a técnica de Fink e Bishop, mas usa a mesma ideia de propriedade como especificação. Como contraste, 15 testes de exemplo."
 
 ## Slide 4 – Randoop (1:00, Lucas)
 **Na tela:** contratos C1–C6 (padrão) e C7–C10 (nossos); JSON de pós-condições; literais; 60 s, semente 42.
@@ -42,7 +42,7 @@ Todos os números vêm de `tests.md`, seção 5.
 **Fala:** "No código correto tudo passou: 917 testes e nenhuma violação. Depois injetamos cinco defeitos. O defeito de overflow, M4, só foi detectado por exemplo e pelo jqwik; o Randoop não achou em nenhuma das quatro sementes, porque nenhum contrato fala de aritmética. Já o defeito no `compareTo` com multiplicação em `long` mostra o contrário: as propriedades de faixa pequena não viram, e só a de faixa larga viu. O M5, `hashCode` só do numerador, ninguém detecta: é um mutante equivalente em relação aos contratos."
 
 ## Slide 7 – Discussão (0:40, Fernando)
-**Na tela:** custo de especificação; filtro de exceções; ameaças à validade.
+**Na tela:** três cartões (custo de especificação, filtro de exceções, ameaças à validade) e a síntese: nenhuma técnica cobre sozinha todos os defeitos.
 **Fala:** "O Randoop custou quatro entradas JSON; as propriedades custaram geradores, faixas e um oráculo exato. O filtro de exceções do artigo trata exceção como entrada inválida, mas em `Fraction` divisão por zero e overflow são comportamento especificado; por isso o Randoop explora pouco essa região e só as propriedades confirmam a exceção exigida. Ameaças: defeitos injetados à mão, poucos, uma só classe, poucas sementes."
 
 ## Slide 8 – Lições aprendidas (0:30, Fernando)
