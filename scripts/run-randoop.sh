@@ -23,6 +23,8 @@ java -classpath "${JAR}${SEP}${CLASSES}" randoop.main.Main gentests \
   --time-limit="$TIME_LIMIT" \
   --randomseed="$SEED" \
   --specifications=randoop/fraction-specs.json \
+  --literals-file=randoop/literals.txt \
+  --literals-level=CLASS \
   --junit-output-dir="$OUT" \
   --junit-package-name=br.pucrs.vv.fraction.randoop
 

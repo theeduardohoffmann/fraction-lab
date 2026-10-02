@@ -45,7 +45,7 @@
         "guard": { "description": "sempre", "condition": "true" },
         "property": {
           "description": "ida e volta",
-          "condition": "!result.isEmpty() && br.pucrs.vv.fraction.Fraction.parse(result).equals(receiver)"
+          "condition": "!result.isEmpty() && result.matches(\"[+-]?[0-9]+(/[0-9]+)?\") && br.pucrs.vv.fraction.Fraction.parse(result).equals(receiver)"
         }
       }
     ]

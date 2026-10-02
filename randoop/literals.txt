@@ -1,0 +1,19 @@
+START CLASSLITERALS
+CLASSNAME
+br.pucrs.vv.fraction.Fraction
+LITERALS
+long:-1000
+long:-7
+long:-6
+long:-4
+long:-3
+long:-2
+long:2
+long:3
+long:4
+long:6
+long:7
+long:1000
+long:9223372036854775807
+long:-9223372036854775808
+END CLASSLITERALS
