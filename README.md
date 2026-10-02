@@ -40,7 +40,8 @@ fraction-lab/
 │   ├── fraction-specs.json    contratos adicionais registrados no Randoop (C7–C10)
 │   └── literals.txt          valores `long` fornecidos ao gerador do Randoop
 ├── scripts/
-│   └── run-randoop.sh         gera os testes com o Randoop
+│   ├── run-randoop.ps1        gera os testes com o Randoop (PowerShell)
+│   └── run-randoop.sh         o mesmo, para Linux, macOS e Git Bash
 ├── resenha/                   resenha crítica (resenha.pdf, com o HTML-fonte)
 ├── apresentacao/              slides (apresentacao.pptx) e roteiro de fala (roteiro.md)
 ├── tests.md                   casos de teste documentados e matriz de rastreabilidade
@@ -53,14 +54,15 @@ fraction-lab/
 
 ## Pré-requisitos
 
-- JDK 17 ou superior.
-- Maven 3.9 ou superior.
+- JDK 17 ou superior (`java -version` para conferir).
+- Maven 3.9 ou superior, com `mvn` no PATH (`mvn -v` para conferir). Download em <https://maven.apache.org/download.cgi>; basta descompactar e adicionar a pasta `bin` ao PATH.
 - Para o Randoop: o arquivo `randoop-all-<versão>.jar`, baixado em <https://github.com/randoop/randoop/releases> (o projeto foi executado com a versão 4.3.4).
-- Para rodar o script do Randoop no Windows: Git Bash (ou WSL).
+
+Os comandos abaixo funcionam no terminal do VS Code com **PowerShell** (Windows). Para Linux, macOS ou Git Bash, o script equivalente é `scripts/run-randoop.sh`.
 
 ## Como rodar os testes (JUnit 5 + jqwik)
 
-```bash
+```powershell
 mvn test
 ```
 
@@ -68,7 +70,16 @@ Roda os testes de exemplo (`EX-*`) e as propriedades do jqwik (`PB-*`). O jqwik 
 
 ## Como rodar o Randoop
 
-1. Gere os testes (tempo em segundos e semente são opcionais; padrão 60 e 42):
+1. Gere os testes. Tempo (segundos) e semente são opcionais; o padrão é 60 e 42:
+
+   ```powershell
+   $env:RANDOOP_JAR = "C:\caminho\para\randoop-all-4.3.4.jar"
+   .\scripts\run-randoop.ps1 -TimeLimit 60 -Seed 42
+   ```
+
+   Se o PowerShell bloquear o script (política de execução), rode antes `Set-ExecutionPolicy -Scope Process Bypass`.
+
+   No Linux, macOS ou Git Bash:
 
    ```bash
    RANDOOP_JAR=/caminho/para/randoop-all-4.3.4.jar scripts/run-randoop.sh 60 42
@@ -78,7 +89,7 @@ Roda os testes de exemplo (`EX-*`) e as propriedades do jqwik (`PB-*`). O jqwik 
 
 2. Compile e rode os testes gerados, junto com os demais, ativando o perfil `randoop`:
 
-   ```bash
+   ```powershell
    mvn -P randoop verify
    ```
 
@@ -93,9 +104,10 @@ Roda os testes de exemplo (`EX-*`) e as propriedades do jqwik (`PB-*`). O jqwik 
 
 Para acrescentar um contrato, inclua uma nova entrada `post` no JSON e rode o script de novo. Registre em `tests.md` a versão do Randoop, o tempo, a semente e o número de testes gerados.
 
+
 ## Como ver a cobertura (JaCoCo)
 
-```bash
+```powershell
 mvn verify
 ```
 
