@@ -22,6 +22,7 @@ java -classpath "${JAR}${SEP}${CLASSES}" randoop.main.Main gentests \
   --testclass=br.pucrs.vv.fraction.Fraction \
   --time-limit="$TIME_LIMIT" \
   --randomseed="$SEED" \
+    --npe-on-non-null-input=ERROR \
   --specifications=randoop/fraction-specs.json \
   --literals-file=randoop/literals.txt \
   --literals-level=CLASS \
