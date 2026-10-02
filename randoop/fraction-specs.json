@@ -1,0 +1,71 @@
+[
+  {
+    "operation": {
+      "classname": "br.pucrs.vv.fraction.Fraction",
+      "name": "getDenominator",
+      "parameterTypes": []
+    },
+    "identifiers": { "parameters": [], "receiverName": "receiver", "returnName": "result" },
+    "post": [
+      {
+        "description": "C7: o denominador é sempre positivo",
+        "guard": { "description": "sempre", "condition": "true" },
+        "property": { "description": "result > 0", "condition": "result > 0" }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "br.pucrs.vv.fraction.Fraction",
+      "name": "getNumerator",
+      "parameterTypes": []
+    },
+    "identifiers": { "parameters": [], "receiverName": "receiver", "returnName": "result" },
+    "post": [
+      {
+        "description": "C8: mdc(|numerador|, denominador) == 1 (zero é 0/1)",
+        "guard": { "description": "sempre", "condition": "true" },
+        "property": {
+          "description": "fração irredutível",
+          "condition": "java.math.BigInteger.valueOf(result).abs().gcd(java.math.BigInteger.valueOf(receiver.getDenominator())).equals(java.math.BigInteger.ONE)"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "br.pucrs.vv.fraction.Fraction",
+      "name": "toString",
+      "parameterTypes": []
+    },
+    "identifiers": { "parameters": [], "receiverName": "receiver", "returnName": "result" },
+    "post": [
+      {
+        "description": "C10: toString não vazio e parse(toString()) reproduz o objeto",
+        "guard": { "description": "sempre", "condition": "true" },
+        "property": {
+          "description": "ida e volta",
+          "condition": "!result.isEmpty() && br.pucrs.vv.fraction.Fraction.parse(result).equals(receiver)"
+        }
+      }
+    ]
+  },
+  {
+    "operation": {
+      "classname": "br.pucrs.vv.fraction.Fraction",
+      "name": "compareTo",
+      "parameterTypes": ["br.pucrs.vv.fraction.Fraction"]
+    },
+    "identifiers": { "parameters": ["other"], "receiverName": "receiver", "returnName": "result" },
+    "post": [
+      {
+        "description": "C9: compareTo == 0 se e somente se equals",
+        "guard": { "description": "argumento não nulo", "condition": "other != null" },
+        "property": {
+          "description": "consistência com equals",
+          "condition": "(result == 0) == receiver.equals(other)"
+        }
+      }
+    ]
+  }
+]

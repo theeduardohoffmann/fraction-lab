@@ -1,0 +1,7 @@
+target/
+tests-randoop/
+.tools/
+.jqwik-database
+*.class
+.idea/
+.vscode/
