@@ -46,6 +46,7 @@ fraction-lab/
 ├── apresentacao/              slides (apresentacao.pptx) e roteiro de fala (roteiro.md)
 ├── tests.md                   casos de teste documentados e matriz de rastreabilidade
 ├── .github/workflows/ci.yml   CI: build, testes e cobertura (GitHub Actions)
+├── mvnw, mvnw.cmd, .mvn/      Maven Wrapper (baixa o Maven sozinho; não precisa instalar)
 ├── pom.xml                    build Maven (JUnit 5, jqwik, JaCoCo, perfil do Randoop)
 └── README.md
 ```
@@ -55,7 +56,7 @@ fraction-lab/
 ## Pré-requisitos
 
 - JDK 17 ou superior (`java -version` para conferir).
-- Maven 3.9 ou superior, com `mvn` no PATH (`mvn -v` para conferir). Download em <https://maven.apache.org/download.cgi>; basta descompactar e adicionar a pasta `bin` ao PATH.
+- Maven: **não precisa instalar**. O repositório inclui o Maven Wrapper (`mvnw.cmd` no Windows, `mvnw` no Linux e macOS), que baixa o Maven 3.9.9 sozinho na primeira execução (precisa de internet).
 - Para o Randoop: o arquivo `randoop-all-<versão>.jar`, baixado em <https://github.com/randoop/randoop/releases> (o projeto foi executado com a versão 4.3.4).
 
 Os comandos abaixo funcionam no terminal do VS Code com **PowerShell** (Windows). Para Linux, macOS ou Git Bash, o script equivalente é `scripts/run-randoop.sh`.
@@ -63,7 +64,7 @@ Os comandos abaixo funcionam no terminal do VS Code com **PowerShell** (Windows)
 ## Como rodar os testes (JUnit 5 + jqwik)
 
 ```powershell
-mvn test
+.\mvnw.cmd test
 ```
 
 Roda os testes de exemplo (`EX-*`) e as propriedades do jqwik (`PB-*`). O jqwik imprime, para cada propriedade, o número de tentativas e a semente aleatória usada, o que permite reproduzir uma execução.
@@ -90,7 +91,7 @@ Roda os testes de exemplo (`EX-*`) e as propriedades do jqwik (`PB-*`). O jqwik 
 2. Compile e rode os testes gerados, junto com os demais, ativando o perfil `randoop`:
 
    ```powershell
-   mvn -P randoop verify
+   .\mvnw.cmd -P randoop verify
    ```
 
 **Contratos.** O artigo (Figura 4) lista como contratos padrão: `equals` reflexivo, `equals`/`hashCode`/`toString` sem exceção, sem NPE quando nenhum argumento era null e sem `AssertionError`. A versão 4.3.4 da ferramenta verifica ainda simetria e transitividade de `equals`, `hashCode` consistente com `equals` e contratos de `compareTo`. Os contratos adicionais do domínio são registrados em `randoop/fraction-specs.json` como pós-condições dos métodos:
@@ -108,10 +109,10 @@ Para acrescentar um contrato, inclua uma nova entrada `post` no JSON e rode o sc
 ## Como ver a cobertura (JaCoCo)
 
 ```powershell
-mvn verify
+.\mvnw.cmd verify
 ```
 
-O relatório HTML fica em `target/site/jacoco/index.html`. Com `mvn -P randoop verify`, a cobertura inclui também os testes gerados pelo Randoop.
+O relatório HTML fica em `target/site/jacoco/index.html`. Com `.\mvnw.cmd -P randoop verify`, a cobertura inclui também os testes gerados pelo Randoop.
 
 ## Casos de teste e rastreabilidade
 

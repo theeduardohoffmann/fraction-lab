@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Gera testes com o Randoop e os coloca em tests-randoop/ (RD-Cn em tests.md).
 # Uso:  RANDOOP_JAR=/caminho/randoop-all-X.Y.Z.jar scripts/run-randoop.sh [segundos] [semente]
-# Pré-requisitos: JDK 17+, Maven, jar do Randoop baixado do site oficial.
+# Pré-requisitos: JDK 17+ e o jar do Randoop (o Maven vem pelo wrapper mvnw).
 set -euo pipefail
 
 : "${RANDOOP_JAR:?defina RANDOOP_JAR com o caminho do randoop-all-*.jar}"
@@ -9,7 +9,7 @@ TIME_LIMIT="${1:-60}"
 SEED="${2:-42}"          # registrar a semente no tests.md para reprodutibilidade
 OUT=tests-randoop
 
-mvn -q -DskipTests compile
+if [ -f ./mvnw ]; then bash ./mvnw -q -DskipTests compile; else mvn -q -DskipTests compile; fi
 rm -rf "$OUT" && mkdir -p "$OUT"
 
 # Separador do classpath: ':' (Linux/macOS/Git Bash usa ';' apenas no Windows nativo)
@@ -28,7 +28,7 @@ java -classpath "${JAR}${SEP}${CLASSES}" randoop.main.Main gentests \
   --junit-output-dir="$OUT" \
   --junit-package-name=br.pucrs.vv.fraction.randoop
 
-echo "Testes gerados em $OUT/. Rode com: mvn -P randoop verify"
+echo "Testes gerados em $OUT/. Rode com: ./mvnw -P randoop verify"
 
 # O Randoop deixa classes auxiliares das condições do JSON na pasta atual
 rm -rf br
