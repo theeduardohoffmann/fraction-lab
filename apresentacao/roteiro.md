@@ -26,8 +26,8 @@ Todos os números vêm de `tests.md`, seção 5. Os slides estão em `apresentac
 **Fala:** "A `Fraction` é imutável e sempre normalizada. Tem aritmética exata e sinaliza overflow com exceção, nunca com resultado errado. Escolhemos esse kata porque tem invariantes fortes, uma álgebra conhecida e um risco numérico claro. Uma decisão de projeto: argumento nulo lança `NullPointerException`, compatível com o contrato do Randoop."
 
 ## Slide 3 – As técnicas e o baseline (0:50, Eduardo)
-**Na tela:** linha do tempo: 1997, Fink e Bishop (propriedades) → 2007, Pacheco et al. (Randoop); faixa de atenção sobre o jqwik; baseline com 15 exemplos.
-**Fala:** "Em 1997, Fink e Bishop propõem testar a partir de propriedades formais, com oráculo gerado da especificação. Em 2007, Pacheco e colegas propõem gerar testes de forma aleatória guiada por feedback, com contratos genéricos como oráculo. Dez anos separam os artigos: o oráculo ficou genérico e a geração de dados ficou automática. Um cuidado: o jqwik não implementa a técnica de Fink e Bishop, mas usa a mesma ideia de propriedade como especificação. Como contraste, 15 testes de exemplo."
+**Na tela:** comparação: 1997, Fink e Bishop (propriedades) × 2007, Pacheco et al. (Randoop); faixa de atenção sobre o jqwik; baseline com 15 exemplos.
+**Fala:** "Em 1997, Fink e Bishop propõem testar a partir de propriedades formais, com oráculo gerado da especificação. Em 2007, Pacheco e colegas propõem gerar testes de forma aleatória guiada por feedback, com contratos genéricos como oráculo. Os dois usam a especificação como oráculo, com ênfases diferentes: Fink e Bishop concentram o esforço na análise do programa e deixam a escolha dos dados ao testador; Pacheco e colegas concentram o esforço na geração automática de entradas. Um não substitui o outro. Um cuidado: o jqwik não implementa a técnica de Fink e Bishop, mas usa a mesma ideia de propriedade como especificação. Como contraste, 15 testes de exemplo."
 
 ## Slide 4 – Randoop (1:00, Lucas)
 **Na tela:** contratos C1–C6 (padrão) e C7–C10 (nossos); JSON de pós-condições; literais; 60 s, semente 42.
@@ -38,8 +38,8 @@ Todos os números vêm de `tests.md`, seção 5. Os slides estão em `apresentac
 **Fala:** "Escrevemos 14 propriedades: normalização, comutatividade, associatividade, inversos, distributividade, ordem total, divisão e exceções. As algébricas usam faixa pequena para não misturar com overflow. O overflow tem propriedades próprias, com a faixa completa de `long` e `BigInteger` como referência: o resultado é exato ou `ArithmeticException`. No P13, 86% das operações não estouraram e 14% lançaram exceção, e nenhuma devolveu valor errado."
 
 ## Slide 6 – Resultados (1:10, Fernando)
-**Na tela:** Tabela 1 da resenha (M1–M5 × Exemplos / jqwik / Randoop) e o baseline: 15 + 18 + 884 testes, 0 falhas.
-**Fala:** "No código correto tudo passou: 917 testes e nenhuma violação. Depois injetamos cinco defeitos. O defeito de overflow, M4, só foi detectado por exemplo e pelo jqwik; o Randoop não achou em nenhuma das quatro sementes, porque nenhum contrato fala de aritmética. Já o defeito no `compareTo` com multiplicação em `long` mostra o contrário: as propriedades de faixa pequena não viram, e só a de faixa larga viu. O M5, `hashCode` só do numerador, ninguém detecta: é um mutante equivalente em relação aos contratos."
+**Na tela:** Tabela 1 da resenha (M1–M5 × Exemplos / jqwik / Randoop) e o baseline: 15 + 18 + 1.467 testes, 0 falhas.
+**Fala:** "No código correto tudo passou: 1.500 testes e nenhuma violação. Depois injetamos cinco defeitos. O defeito de overflow, M4, só foi detectado por exemplo e pelo jqwik; o Randoop não achou em nenhuma das quatro sementes, porque nenhum contrato fala de aritmética. Já o defeito no `compareTo` com multiplicação em `long` mostra o contrário: as propriedades de faixa pequena não viram, e só a de faixa larga viu. O M5, `hashCode` só do numerador, ninguém detecta: é um mutante equivalente em relação aos contratos."
 
 ## Slide 7 – Discussão (0:40, Fernando)
 **Na tela:** três cartões (custo de especificação, filtro de exceções, ameaças à validade) e a síntese: nenhuma técnica cobre sozinha todos os defeitos.

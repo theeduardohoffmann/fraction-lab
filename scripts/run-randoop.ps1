@@ -27,7 +27,7 @@ java -classpath $classpath randoop.main.Main gentests `
     "--testclass=br.pucrs.vv.fraction.Fraction" `
     "--time-limit=$TimeLimit" `
     "--randomseed=$Seed" `
-    --npe-on-non-null-input=ERROR `
+    "--npe-on-non-null-input=ERROR" `
     "--specifications=randoop/fraction-specs.json" `
     "--literals-file=randoop/literals.txt" `
     "--literals-level=CLASS" `

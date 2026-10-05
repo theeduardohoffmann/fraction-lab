@@ -151,6 +151,7 @@ A semente 42 refere-se ao Randoop. O argumento `-Djqwik.seed=42` usado na automa
 |---------|-----------|
 | Exemplos (EX-01…15) | 15 de 15 passaram |
 | jqwik (P1–P14, distribuídas em 18 métodos) | 18 de 18 passaram |
+| jqwik, PB-P13 (estatística do jqwik) | Em uma execução de 05/10/2026 (Windows 11, JDK 23): 3.948 operações verificadas, 3.409 (86%) sem overflow e 539 (14%) com `ArithmeticException`; nenhuma devolveu valor errado. Os percentuais variam pouco entre execuções, porque a semente muda |
 | Randoop | 1.467 testes de regressão gerados e executados, sem falhas; 0 testes reveladores de erro |
 | Todos juntos (`mvn -P randoop verify`) | 1.500 testes, 0 falhas e 0 erros |
 

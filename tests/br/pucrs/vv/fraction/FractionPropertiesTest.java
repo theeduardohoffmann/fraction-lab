@@ -56,6 +56,18 @@ class FractionPropertiesTest {
         return Arbitraries.longs().filter(x -> x != 0);
     }
 
+    /** Qualquer valor de long, incluindo Long.MIN_VALUE e Long.MAX_VALUE. */
+    @Provide
+    Arbitrary<Long> anyLong() {
+        return Arbitraries.longs();
+    }
+
+    /** Denominadores textuais não negativos (para montar "n/d" em P14b). */
+    @Provide
+    Arbitrary<Long> nonNegLong() {
+        return Arbitraries.longs().between(0, Long.MAX_VALUE);
+    }
+
     /**
      * Mistura de frações pequenas e frações com numerador/denominador em toda a
      * faixa de long (o jqwik inclui Long.MIN_VALUE/MAX_VALUE como casos limite).
@@ -112,11 +124,6 @@ class FractionPropertiesTest {
         assertEquals(BigInteger.ONE, bn(f).abs().gcd(bd(f)), "mdc deve ser 1: " + f);
         assertTrue(sameValue(BigInteger.valueOf(n), BigInteger.valueOf(d), f),
                 "valor racional preservado: " + n + "/" + d + " -> " + f);
-    }
-
-    @Provide
-    Arbitrary<Long> anyLong() {
-        return Arbitraries.longs();
     }
 
     @Property
@@ -290,10 +297,5 @@ class FractionPropertiesTest {
         } catch (ArithmeticException e) {
             assertThrows(ArithmeticException.class, () -> Fraction.of(n, d));
         }
-    }
-
-    @Provide
-    Arbitrary<Long> nonNegLong() {
-        return Arbitraries.longs().between(0, Long.MAX_VALUE);
     }
 }
