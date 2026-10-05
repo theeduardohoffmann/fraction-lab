@@ -5,7 +5,7 @@
 ![JUnit 5](https://img.shields.io/badge/JUnit-5-green)
 ![jqwik](https://img.shields.io/badge/jqwik-1.9.3-orange)
 
-Trabalho T1 de **Verificação e Validação** (PUCRS, Escola Politécnica, 2026/I).
+Trabalho T1 de **Verificação e Validação** (PUCRS, Escola Politécnica, 2026/I)
 
 O kata é `Fraction`: uma classe Java para números racionais (frações), imutável e sempre normalizada. Ela é testada com duas técnicas, e os resultados são comparados na resenha crítica:
 
