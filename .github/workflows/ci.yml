@@ -4,10 +4,11 @@ on:
   push:
     branches: [master, main]
   pull_request:
+  workflow_dispatch:   # permite rodar manualmente pela aba Actions
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04   # fixo, para a migração do ubuntu-latest não mudar o ambiente
     steps:
       - uses: actions/checkout@v4
 
