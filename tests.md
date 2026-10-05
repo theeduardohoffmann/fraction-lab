@@ -34,6 +34,8 @@ Arquivos: `tests/br/pucrs/vv/fraction/` (`FractionExampleTest`, `FractionPropert
 
 Contratos do Randoop. Da **Figura 4 do artigo** (Pacheco et al., 2007): C1 `o.equals(o)` é verdadeiro; C5 `equals`, `hashCode` e `toString` não lançam exceção; C6 nenhum NPE quando nenhum argumento era null (o artigo lista também "sem `AssertionError`"). **C2, C3 e C4** (`equals` simétrico, `equals` transitivo, `equals` ⇒ mesmo `hashCode`) **não constam da Figura 4**: são contratos que a versão 4.3.4 da ferramenta verifica (classes `EqualsSymmetric`, `EqualsTransitive` e `EqualsHashcode` no jar). A versão 4.3.4 também aplica contratos próprios para `compareTo` (`compareTo-transitive`, `compareTo-equals` etc.). **C7–C10** são adicionais, registrados por nós: C7 denominador > 0; C8 mdc = 1 e zero é 0/1; C9 `compareTo == 0` ⇔ `equals`; C10 `toString` não vazio e `parse(toString())` igual ao original.
 
+Nos scripts usados nos experimentos abaixo, C6 é configurado explicitamente com `--npe-on-non-null-input=ERROR`. A menção a `AssertionError` descreve o artigo de 2007; não significa que toda exceção não verificada seja classificada como falha pela configuração atual da ferramenta.
+
 Propriedades do jqwik: P1…P14, descritas na seção 2.
 
 ---
@@ -131,52 +133,64 @@ Geradores "pequenos": n ∈ [−1000, 1000], d ∈ [1, 1000] (sem overflow). Ger
 
 ### 5.1 Ambiente e parâmetros
 
+Os resultados abaixo são da execução de 02/10/2026 sobre o commit `94c00e7`, com a configuração corrigida do Randoop. Substituem os números da execução anterior.
+
 | Item | Valor |
 |------|-------|
-| Plataforma | Windows 11, JDK 23 compilando com `release 17`, Maven 3.9.9 |
+| Plataforma | macOS, JDK 21 compilando com `release 17`, Maven integrado ao IntelliJ |
 | Bibliotecas | JUnit 5.11.4, jqwik 1.9.3, JaCoCo 0.8.12 |
-| Randoop | 4.3.4, `--time-limit=60`, `--randomseed=42`, literais de `randoop/literals.txt` |
-| jqwik | 1000 tentativas por propriedade (18 propriedades) |
+| Randoop | 4.3.4, `--time-limit=60`, `--randomseed=42`, `--npe-on-non-null-input=ERROR`, contratos de `randoop/fraction-specs.json` e literais de `randoop/literals.txt` |
+| jqwik | 18 métodos de propriedades; sementes efetivamente usadas registradas nos logs |
+| Execução | Cópias isoladas, uma mutação por cópia, com até duas execuções independentes em paralelo |
+
+A semente 42 refere-se ao Randoop. O argumento `-Djqwik.seed=42` usado na automação não fixou as sementes do jqwik nesta configuração; para reproduzir as propriedades, devem ser consultadas as sementes registradas nos logs.
 
 ### 5.2 Código correto (baseline, M0)
 
 | Técnica | Resultado |
 |---------|-----------|
 | Exemplos (EX-01…15) | 15 de 15 passaram |
-| jqwik (PB-P1…P14b) | 18 de 18 passaram, 1000 tentativas cada |
-| jqwik, PB-P13 (estatística do jqwik) | 3949 operações verificadas: 3390 (86%) sem overflow e 559 (14%) com `ArithmeticException`; nenhuma devolveu valor errado |
-| Randoop | 1674 sequências geradas, 884 testes de regressão, 0 testes reveladores de erro; 61 execuções excepcionais contra 20.861.973 normais |
-| Todos juntos (`mvn -P randoop test`) | 917 testes, 0 falhas |
+| jqwik (P1–P14, distribuídas em 18 métodos) | 18 de 18 passaram |
+| Randoop | 1.467 testes de regressão gerados e executados, sem falhas; 0 testes reveladores de erro |
+| Todos juntos (`mvn -P randoop verify`) | 1.500 testes, 0 falhas e 0 erros |
 
-Os testes do Randoop são regenerados pelo script (`scripts/run-randoop.sh 60 42`). O Randoop limita a geração por **tempo**, então o número de sequências varia entre execuções, mesmo com a mesma semente (por exemplo, 1674 numa execução e 509 em outra, com configurações iguais de semente e tempo).
+O Randoop limita a geração por tempo. Assim, a quantidade de testes varia com o ambiente e a carga da máquina, mesmo usando a mesma semente. Esses resultados correspondem à execução registrada acima e não demonstram ausência de defeitos.
 
-### 5.3 Mutações manuais (defeitos injetados em `Fraction.java`)
+### 5.3 Mutações manuais em `Fraction.java`
 
-Critério: "detectou" = ao menos um teste da técnica falhou. Randoop: semente 42, 60 s.
+Foram avaliadas cinco mutações: quatro introduzem defeitos e M5 preserva o contrato de igualdade/hashCode. Cada mutação foi aplicada isoladamente a uma cópia do código correto.
 
-| ID | Defeito injetado | Exemplos (EX) | jqwik (PB) | Randoop (semente 42) |
-|----|------------------|---------------|------------|----------------------|
-| M1 | `of` não move o sinal do denominador para o numerador | Detectou: EX-01 | Detectou: P1, P2, P3, P11 | Detectou: 1 teste de erro (`compareTo-transitive`) |
-| M2 | `of` não reduz por mdc | Detectou: EX-02, EX-07, EX-14, EX-15 | Detectou: P1, P2, P5, P9, P11 | Detectou: 6 testes de erro (incluindo a pós-condição C8 e `compareTo-equals`) |
-| M3 | `compareTo` por multiplicação cruzada em `long` (estoura) | Não detectou | Detectou só em P10d (faixa larga); P10a–c, de faixa pequena, não | Detectou: 1 teste de erro (`compareTo-transitive`) |
-| M4 | Overflow ignorado em `plus` e `times` | Detectou: EX-12 | Detectou: P13 (P4–P9, de faixa pequena, não) | **Não detectou** (0 testes de erro) |
-| M5 | `hashCode` só do numerador | Não detectou | Não detectou | Não detectou |
+Critério: "detectou" = ao menos um teste da técnica revelou uma violação causada pela mutação. Para o Randoop, a geração terminou normalmente e os testes reveladores de erro foram executados. Parâmetros: semente 42 e 60 segundos.
 
-M5 é, na prática, um **mutante equivalente em relação aos contratos**: como a fração é normalizada, frações iguais continuam com o mesmo hash e só aumentam as colisões. Nenhum oráculo baseado em `equals`/`hashCode` consistentes o vê.
+| ID | Alteração aplicada | Exemplos (EX) | jqwik (PB) | Randoop: testes reveladores de erro | Testes de regressão do Randoop |
+|----|-------------------|---------------|------------|-----------------------------------|-------------------------------|
+| M1 | `of` não move o sinal do denominador para o numerador | Detectou: EX-01 | Detectou: P1, P2, P3, P11 | Detectou: 18 testes falharam | 1.441 passaram |
+| M2 | `of` não divide numerador e denominador pelo mdc | Detectou: EX-02, EX-07, EX-14, EX-15 | Detectou: P1, P2, P5, P9, P11 | Detectou: 16 testes falharam | 1.401 passaram |
+| M3 | `compareTo` usa multiplicação cruzada em `long`, sujeita a overflow | Não detectou | Detectou: P10d | Detectou: 4 testes falharam | 1.458 passaram |
+| M4 | `plus` e `times` usam operadores aritméticos no lugar de `addExact` e `multiplyExact` | Detectou: EX-12 | Detectou: P13 | Não detectou: 0 testes reveladores de erro | 1.466 passaram |
+| M5 | `hashCode` usa somente o numerador | Não detectou | Não detectou | Não detectou: 0 testes reveladores de erro | 1.473 passaram |
+
+Em M1, P3 detectou o problema por uma `IllegalArgumentException`: a representação produzida, como `1/-2`, foi rejeitada por `parse`. As demais propriedades indicadas falharam por asserção.
+
+M5 preserva o contrato: frações iguais continuam produzindo o mesmo hash. A alteração permite colisões adicionais entre valores diferentes, o que não viola esse contrato. Portanto, não deve ser contada como um defeito não detectado.
+
+Os testes de regressão do Randoop registram comportamentos observados na versão usada para geração, inclusive na versão mutada. Passarem não significa que essa versão esteja correta; a detecção contabilizada aqui vem dos testes reveladores de erro.
 
 ### 5.4 Variação do Randoop entre sementes (60 s cada)
 
-Testes reveladores de erro / testes de regressão:
+Testes reveladores de erro que falharam / testes de regressão que passaram:
 
 | Mutação | Semente 1 | Semente 2 | Semente 3 |
 |---------|-----------|-----------|-----------|
-| M1 | 37 / 556 | 76 / 670 | 10 / 727 |
-| M4 | 0 / 615 | 0 / 799 | 0 / 757 |
+| M1 | 74 / 1.231 | 202 / 1.805 | 30 / 1.484 |
+| M4 | 0 / 1.238 | 0 / 1.718 | 0 / 1.606 |
 
-M1 foi detectado em todas as sementes testadas (1, 2, 3 e 42); M4 não foi detectado em nenhuma (1, 2, 3 e 42).
+O Randoop detectou M1 em todas as sementes testadas (1, 2, 3 e 42) e não detectou M4 nessas execuções. Isso não permite concluir que a ferramenta nunca detectaria M4 com outros contratos, entradas ou parâmetros.
 
-Contratos que dispararam em M1, semente 1 (execução separada: 48 testes de erro): 47 pelo contrato embutido `compareTo-transitive` e 1 pela pós-condição `result > 0` (C7, nosso JSON). O Randoop aplica, além dos contratos listados na seção 0, contratos próprios para `compareTo` (`compareTo-transitive`, `compareTo-equals`), que aparecem nas mensagens de falha.
+Foram preservados os logs de compilação, geração e execução, os relatórios de testes, os testes gerados e o código exato de cada mutação. O conjunto foi consolidado no relatório `RELATORIO.md` e no pacote `evidencias-mutacoes.zip`, mantidos separadamente do repositório nesta revisão.
 
 ### 5.5 Dificuldades registradas
 - A primeira versão da pós-condição C10 chamava `parse` sobre texto malformado (o que acontece em M1) e o Randoop **abortou** com "Failure executing expression method". Corrigimos com uma guarda de formato antes de chamar `parse`.
 - Numa execução exploratória de 20 s e sem literais, o Randoop não detectou M1: o gerador usava quase só `of(1, 1)`. Passamos a fornecer literais variados (`randoop/literals.txt`), incluindo valores negativos e `Long.MAX_VALUE`/`Long.MIN_VALUE`.
+
+- Na execução manual de M1, a geração foi interrompida ao carregar `RegressionTest0`. Nas cópias isoladas com Java 21, as 12 gerações terminaram normalmente. Como o caminho e o contexto de execução também mudaram, não foi isolada a causa do erro original.
