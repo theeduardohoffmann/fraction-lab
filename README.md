@@ -5,7 +5,7 @@
 ![JUnit 5](https://img.shields.io/badge/JUnit-5-green)
 ![jqwik](https://img.shields.io/badge/jqwik-1.9.3-orange)
 
-Trabalho T1 de **Verificação e Validação** (PUCRS, Escola Politécnica, 2026/I)
+Trabalho T1 de **Verificação e Validação** (PUCRS, Escola Politécnica, 2026/I).
 
 O kata é `Fraction`: uma classe Java para números racionais (frações), imutável e sempre normalizada. Ela é testada com duas técnicas, e os resultados são comparados na resenha crítica:
 
@@ -22,7 +22,7 @@ Também há um conjunto pequeno de **testes de exemplo** (partição de equival�
 | Código dos testes | [`tests/`](tests/br/pucrs/vv/fraction) |
 | Casos de teste documentados e resultados | [`tests.md`](tests.md) |
 | Resenha crítica (PDF) | [`resenha/resenha.pdf`](resenha/resenha.pdf) |
-| Apresentação | [`apresentacao/apresentacao.pptx`](apresentacao/apresentacao.pptx) e [`roteiro.md`](apresentacao/roteiro.md) |
+| Apresentação (slides) | [`apresentacao/apresentacao.pdf`](apresentacao/apresentacao.pdf) |
 
 ## A classe `Fraction`
 
@@ -54,7 +54,7 @@ fraction-lab/
 │   ├── run-randoop.ps1        gera os testes com o Randoop (PowerShell)
 │   └── run-randoop.sh         o mesmo, para Linux, macOS e Git Bash
 ├── resenha/                   resenha crítica (resenha.pdf e o HTML-fonte)
-├── apresentacao/              slides (apresentacao.pptx) e roteiro de fala (roteiro.md)
+├── apresentacao/              slides da apresentação (apresentacao.pdf)
 ├── tests.md                   casos de teste, rastreabilidade e resultados
 ├── .github/workflows/ci.yml   CI: build, testes e cobertura (GitHub Actions)
 ├── mvnw, mvnw.cmd, .mvn/      Maven Wrapper (baixa o Maven sozinho; não precisa instalar)
@@ -78,7 +78,7 @@ Os comandos abaixo são para o terminal do VS Code com **PowerShell** (Windows).
 .\mvnw.cmd test
 ```
 
-Roda os testes de exemplo (`EX-*`) e as propriedades do jqwik (`PB-*`). O jqwik imprime, para cada propriedade, o número de tentativas e a semente aleatória usada, o que permite reproduzir uma execução. Resultado esperado: `Tests run: 33, Failures: 0, Errors: 0` e `BUILD SUCCESS`.
+Roda os testes de exemplo (`EX-*`) e as propriedades do jqwik (`PB-*`). O jqwik imprime, para cada propriedade, o número de tentativas e a semente aleatória usada, o que permite reproduzir uma execução. Resultado esperado: `Tests run: 37, Failures: 0, Errors: 0` (15 exemplos e 22 métodos de propriedades) e `BUILD SUCCESS`.
 
 ## Como rodar o Randoop
 
@@ -142,7 +142,7 @@ Todos os casos estão documentados em [`tests.md`](tests.md), com ID, técnica, 
 
 Detalhes, parâmetros e ressalvas estão em [`tests.md`](tests.md), seção 5.
 
-- **Código correto:** os 15 testes de exemplo e os 18 métodos de propriedades passam. O Randoop (60 s, semente 42) gerou 1.467 testes de regressão e nenhum teste revelador de erro; no total, 1.500 testes, sem falhas.
+- **Código correto:** nos experimentos de 02/10/2026, os 15 testes de exemplo e os 18 métodos de propriedades (P1–P14) passaram. O Randoop (60 s, semente 42) gerou 1.467 testes de regressão e nenhum teste revelador de erro; no total, 1.500 testes, sem falhas. Depois disso, as propriedades P15–P18 foram acrescentadas: a suíte JUnit/jqwik atual tem 37 testes (15 exemplos e 22 métodos de propriedades).
 - **Mutações:** cinco alterações manuais em `Fraction.java`, cada uma aplicada a uma cópia isolada. "Detectou" significa que ao menos um teste da técnica revelou a violação.
 
 | Alteração | Exemplos | jqwik | Randoop (semente 42) |
@@ -153,6 +153,8 @@ Detalhes, parâmetros e ressalvas estão em [`tests.md`](tests.md), seção 5.
 | M4: overflow ignorado em `plus` e `times` | detectou | detectou (P13) | **não detectou** |
 | M5: `hashCode` só do numerador | não | não | não (preserva o contrato) |
 
+As alterações M1 a M4 foram reaplicadas em 06/10/2026 à suíte atual (com P15–P18) e continuam sendo detectadas pelos testes de exemplo e pelo jqwik (ver `tests.md`, seção 5.3).
+
 O Randoop não detectou M4 porque nenhum dos contratos usados verifica o resultado aritmético. Esse resultado vale para esses contratos, sementes e tempo, e não prova que a ferramenta nunca o detectaria.
 
 ## Contribuições da equipe
@@ -161,9 +163,9 @@ Resumo baseado no histórico de commits do repositório (`git log`).
 
 | Integrante | Contribuições |
 |------------|---------------|
-| Eduardo Hoffmann | Classe `Fraction`; testes de exemplo e de propriedades; Maven, JaCoCo, Maven Wrapper e CI; scripts do Randoop; versão inicial da resenha, dos slides e do `tests.md` |
+| Eduardo Hoffmann | Classe `Fraction`; testes de exemplo e propriedades PB-P1 a PB-P14; Maven, JaCoCo, Maven Wrapper e CI; scripts do Randoop; versão inicial da resenha, dos slides e do `tests.md` |
 | Fernando Kunst | Configuração do Randoop para NPE com argumentos não nulos; experimentos de mutação em cópias isoladas (macOS, JDK 21); atualização do `tests.md` e da resenha com os resultados revisados |
-| Lucas Mocelin | *a preencher pela equipe* |
+| Lucas Mocelin | Propriedades PB-P15 a PB-P18 (`negate`, `abs`, `signum`, `reciprocal` e `doubleValue`, requisito R11); atualização do `tests.md`; execução da suíte em outra máquina (Windows 11, JDK 21) |
 
 ## Equipe
 

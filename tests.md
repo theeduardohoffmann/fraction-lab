@@ -143,7 +143,7 @@ Os resultados abaixo são da execução de 02/10/2026 sobre o commit `94c00e7`, 
 | Plataforma  | macOS, JDK 21 compilando com `release 17`, Maven integrado ao IntelliJ                                                                                        |
 | Bibliotecas | JUnit 5.11.4, jqwik 1.9.3, JaCoCo 0.8.12                                                                                                                      |
 | Randoop     | 4.3.4, `--time-limit=60`, `--randomseed=42`, `--npe-on-non-null-input=ERROR`, contratos de `randoop/fraction-specs.json` e literais de `randoop/literals.txt` |
-| jqwik       | 22 métodos de propriedades; sementes efetivamente usadas registradas nos logs                                                                                 |
+| jqwik | 18 métodos de propriedades (P1–P14) nos experimentos de 02/10; 22 métodos (P1–P18) após o PR #2. Sementes efetivamente usadas registradas nos logs |
 | Execução    | Cópias isoladas, uma mutação por cópia, com até duas execuções independentes em paralelo                                                                      |
 
 A semente 42 refere-se ao Randoop. O argumento `-Djqwik.seed=42` usado na automação não fixou as sementes do jqwik nesta configuração; para reproduzir as propriedades, devem ser consultadas as sementes registradas nos logs.
@@ -153,10 +153,10 @@ A semente 42 refere-se ao Randoop. O argumento `-Djqwik.seed=42` usado na automa
 | Técnica                                    | Resultado                                                                                                                                                                                                |
 | ------------------------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
 | Exemplos (EX-01…15)                        | 15 de 15 passaram                                                                                                                                                                                        |
-| jqwik (P1–P18, distribuídas em 22 métodos) | 22 de 22 passaram                                                                                                                                                                                        |
+| jqwik (P1–P14, distribuídas em 18 métodos) | 18 de 18 passaram (experimentos de 02/10). A suíte atual, com P15–P18, tem 22 métodos: ver a última linha desta tabela |
 | jqwik, PB-P13 (estatística do jqwik)       | Em uma execução de 05/10/2026 (Windows 11, JDK 23): 3.948 operações verificadas, 3.409 (86%) sem overflow e 539 (14%) com `ArithmeticException`; nenhuma devolveu valor errado. Os percentuais variam pouco entre execuções, porque a semente muda |
 | Randoop                                    | 1.467 testes de regressão gerados e executados, sem falhas; 0 testes reveladores de erro                                                                                                                 |
-| Todos juntos (`mvn -P randoop verify`)     | 1.500 testes, 0 falhas e 0 erros                                                                                                                                                                         |
+| Todos juntos (`mvn -P randoop verify`), experimentos de 02/10 | 1.500 testes (15 exemplos + 18 propriedades + 1.467 do Randoop), 0 falhas e 0 erros |
 | Execução do Lucas Mocelin                  | Windows 11, JDK 21, Maven 3.9.16 — `mvn test` — 37 testes (15 exemplos + 22 propriedades), 0 falhas, 0 erros — BUILD SUCCESS                                                                           |
 
 O Randoop limita a geração por tempo. Assim, a quantidade de testes varia com o ambiente e a carga da máquina, mesmo usando a mesma semente. Esses resultados correspondem à execução registrada acima e não demonstram ausência de defeitos.
@@ -175,7 +175,18 @@ Critério: "detectou" = ao menos um teste da técnica revelou uma violação cau
 | M4 | `plus` e `times` usam operadores aritméticos no lugar de `addExact` e `multiplyExact` | Detectou: EX-12                      | Detectou: P13                 | Não detectou: 0 testes reveladores de erro | 1.466 passaram                 |
 | M5 | `hashCode` usa somente o numerador                                                    | Não detectou                         | Não detectou                  | Não detectou: 0 testes reveladores de erro | 1.473 passaram                 |
 
-Em M1, P3 detectou o problema por uma `IllegalArgumentException`: a representação produzida, como `1/-2`, foi rejeitada por `parse`. As demais propriedades indicadas falharam por asserção.
+**Reaplicação em 06/10/2026 à suíte atual (P1–P18, após o PR #2).** As alterações M1 a M4 foram aplicadas de novo, uma por vez, a uma cópia do código, e rodou-se `mvnw test` (Windows 11, JDK 23, uma execução por alteração; o Randoop não foi reexecutado). Todas continuam sendo detectadas, mas o conjunto de propriedades que as detecta mudou em M1 e M2:
+
+| ID | Detectada por (suíte atual) |
+|----|-----------------------------|
+| M1 | EX-01; P1, P11 e P17. P2 e P3 deixaram de detectá-la, porque passaram a usar apenas denominadores positivos |
+| M2 | EX-02, EX-07, EX-14 e EX-15; P1, P2, P5, P9, P11 e P13 |
+| M3 | P10d |
+| M4 | EX-12; P13 |
+
+A tabela acima (e a Tabela 1 da resenha) descreve os experimentos de 02/10 sobre as propriedades P1–P14 originais. Os resultados do Randoop continuam sendo os de 02/10.
+
+Nos experimentos de 02/10, em M1, P3 detectou o problema por uma `IllegalArgumentException`: a representação produzida, como `1/-2`, foi rejeitada por `parse`. As demais propriedades indicadas falharam por asserção.
 
 M5 preserva o contrato: frações iguais continuam produzindo o mesmo hash. A alteração permite colisões adicionais entre valores diferentes, o que não viola esse contrato. Portanto, não deve ser contada como um defeito não detectado.
 
